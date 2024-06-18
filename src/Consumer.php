@@ -12,7 +12,7 @@ abstract class Consumer implements EventSauceConsumer
     public function handle(Message $message): void
     {
         $event = $message->event();
-        $parts = explode('\\', get_class($event));
+        $parts = explode('\\', $event::class);
         $method = 'handle'.end($parts);
 
         if (method_exists($this, $method)) {

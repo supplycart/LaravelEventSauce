@@ -19,8 +19,6 @@ use function resolve;
 
 abstract class AggregateRootRepository implements EventSauceAggregateRootRepository
 {
-    private LaravelMessageRepository $messageRepository;
-
     protected string $aggregateRoot = '';
 
     protected array $consumers = [];
@@ -37,13 +35,11 @@ abstract class AggregateRootRepository implements EventSauceAggregateRootReposit
 
     protected static string $outputFile = '';
 
-    public function __construct(LaravelMessageRepository $messageRepository)
+    public function __construct(private LaravelMessageRepository $messageRepository)
     {
         if (! is_a($this->aggregateRoot, AggregateRoot::class, true)) {
             throw new LogicException('You have to set an aggregate root before the repository can be initialized.');
         }
-
-        $this->messageRepository = $messageRepository;
 
         if ($this->connection) {
             $this->messageRepository->setConnection($this->connection);

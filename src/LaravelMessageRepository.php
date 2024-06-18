@@ -18,18 +18,12 @@ use Ramsey\Uuid\Uuid;
 
 final class LaravelMessageRepository implements MessageRepository
 {
-    private DatabaseManager $database;
-
-    private MessageSerializer $serializer;
-
     private string $connection;
 
     private string $table;
 
-    public function __construct(DatabaseManager $database, MessageSerializer $serializer, Config $config)
+    public function __construct(private DatabaseManager $database, private MessageSerializer $serializer, Config $config)
     {
-        $this->database = $database;
-        $this->serializer = $serializer;
         $this->connection = (string) $config->get('eventsauce.connection');
         $this->table = (string) $config->get('eventsauce.table');
     }
@@ -38,9 +32,7 @@ final class LaravelMessageRepository implements MessageRepository
     {
         $connection = $this->connection();
 
-        collect($messages)->map(function (Message $message) {
-            return $this->serializer->serializeMessage($message);
-        })->each(function (array $message) use ($connection) {
+        collect($messages)->map(fn(Message $message) => $this->serializer->serializeMessage($message))->each(function (array $message) use ($connection) {
             $headers = $message['headers'];
 
             $connection->table($this->table)->insert([

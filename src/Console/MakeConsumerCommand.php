@@ -21,7 +21,7 @@ final class MakeConsumerCommand extends MakeCommand
             $this->ensureValidPaths([
                 $consumerPath,
             ]);
-        } catch (MakeFileFailed $exception) {
+        } catch (MakeFileFailed) {
             return 1;
         }
 

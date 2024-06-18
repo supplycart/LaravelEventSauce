@@ -12,10 +12,9 @@ final class NewUserNotification extends Notification
     /**
      * Get the notification's channels.
      *
-     * @param  mixed  $notifiable
      * @return array|string
      */
-    public function via($notifiable)
+    public function via(mixed $notifiable)
     {
         return ['mail'];
     }

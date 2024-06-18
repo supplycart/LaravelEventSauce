@@ -16,14 +16,11 @@ final class HandleConsumer implements ShouldQueue
     use InteractsWithQueue;
     use Queueable;
 
-    private string $consumer;
-
     /** @var Message[] */
     private $messages = [];
 
-    public function __construct(string $consumer, Message ...$messages)
+    public function __construct(private string $consumer, Message ...$messages)
     {
-        $this->consumer = $consumer;
         $this->messages = $messages;
     }
 

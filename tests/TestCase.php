@@ -22,7 +22,7 @@ abstract class TestCase extends Orchestra
     protected function getUserWasRegisteredMessage(RegistrationAggregateRootId $id = null): Message
     {
         $event = new UserWasRegistered('Dries Vints', 'dries.vints@gmail.com');
-        $id = $id ?? RegistrationAggregateRootId::create();
+        $id ??= RegistrationAggregateRootId::create();
 
         return (new DefaultHeadersDecorator())
             ->decorate(new Message($event, [Header::AGGREGATE_ROOT_ID => $id]));

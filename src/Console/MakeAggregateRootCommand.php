@@ -31,7 +31,7 @@ final class MakeAggregateRootCommand extends MakeCommand
                 $aggregateRootIdPath,
                 $aggregateRootRepositoryPath,
             ]);
-        } catch (MakeFileFailed $exception) {
+        } catch (MakeFileFailed) {
             return 1;
         }
 
