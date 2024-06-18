@@ -1,5 +1,5 @@
 {
-    "name": "eventsauce/laravel-eventsauce",
+    "name": "supplycart/laravel-eventsauce",
     "description": "Integration support for EventSauce with the Laravel framework.",
     "keywords": ["laravel", "event sourcing", "eventsauce"],
     "license": "MIT",
