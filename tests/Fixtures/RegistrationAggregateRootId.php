@@ -10,11 +10,8 @@ use Ramsey\Uuid\UuidInterface;
 
 final class RegistrationAggregateRootId implements AggregateRootId
 {
-    private string $identifier;
-
-    public function __construct(string $identifier)
+    public function __construct(private string $identifier)
     {
-        $this->identifier = $identifier;
     }
 
     public function toString(): string

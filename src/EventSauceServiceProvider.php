@@ -40,13 +40,9 @@ final class EventSauceServiceProvider extends ServiceProvider
             MakeConsumerCommand::class,
         ]);
 
-        $this->app->bind(MessageSerializer::class, function ($app) {
-            return $app->make(ConstructingMessageSerializer::class);
-        });
+        $this->app->bind(MessageSerializer::class, fn($app) => $app->make(ConstructingMessageSerializer::class));
 
-        $this->app->bind(MessageDecorator::class, function ($app) {
-            return $app->make(DefaultHeadersDecorator::class);
-        });
+        $this->app->bind(MessageDecorator::class, fn($app) => $app->make(DefaultHeadersDecorator::class));
     }
 
     public function provides()

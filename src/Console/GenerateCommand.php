@@ -17,13 +17,9 @@ final class GenerateCommand extends Command
 
     protected $description = 'Generate commands and events for aggregate roots.';
 
-    protected Filesystem $filesystem;
-
-    public function __construct(Filesystem $files)
+    public function __construct(protected Filesystem $filesystem)
     {
         parent::__construct();
-
-        $this->filesystem = $files;
     }
 
     public function handle(): void
@@ -35,9 +31,7 @@ final class GenerateCommand extends Command
         $this->info('Start generating code...');
 
         collect(config('eventsauce.repositories', []))
-            ->reject(function (string $repository) {
-                return $repository::inputFile() === '';
-            })
+            ->reject(fn(string $repository) => $repository::inputFile() === '')
             ->each(function (string $repository) {
                 $this->generateCode($repository::inputFile(), $repository::outputFile());
             });

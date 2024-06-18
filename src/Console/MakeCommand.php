@@ -11,13 +11,9 @@ use Illuminate\Support\Str;
 
 abstract class MakeCommand extends Command
 {
-    protected Filesystem $filesystem;
-
-    public function __construct(Filesystem $files)
+    public function __construct(protected Filesystem $filesystem)
     {
         parent::__construct();
-
-        $this->filesystem = $files;
     }
 
     protected function formatClassName(string $namespace): string
