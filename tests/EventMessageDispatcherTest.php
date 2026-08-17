@@ -10,8 +10,7 @@ use Tests\Fixtures\UserWasRegistered;
 
 class EventMessageDispatcherTest extends TestCase
 {
-    /** @test */
-    public function it_can_dispatch_messages()
+    public function test_it_can_dispatch_messages()
     {
         $message = $this->getUserWasRegisteredMessage();
 

@@ -21,16 +21,15 @@
 
 # Laravel EventSauce
 
-> 👋 [This project is currently looking for a new maintainer.](https://github.com/EventSaucePHP/LaravelEventSauce/issues/28)
-
 This library allows you to easily integrate [EventSauce](https://eventsauce.io) with your Laravel application. It takes out the tedious work of having to set up your own message dispatcher and provides an easy API to set up [aggregate roots](#aggregate-roots), [aggregate root repositories](#aggregate-root-repositories), [consumers](#consumers), and more. It also comes with a range of scaffolding console commands to easily generate the boilerplate needed to get started with an Event Sourced application.
 
 > ⚠️ While already usable, this library is currently still a work in progress. More documentation and features will be added over time. We appreciate pull requests that help extend and improve this project.
 
 ## Requirements
 
-- PHP 7.4 or higher
-- Laravel 8.0 or higher
+- PHP 8.5
+- Laravel 11, 12, or 13
+- EventSauce 3
 
 ## Installation
 
@@ -43,8 +42,23 @@ php artisan config:clear
 You can install the library through [Composer](https://getcomposer.org). This will also install [the main EventSauce library](https://github.com/EventSaucePHP/EventSauce).
 
 ```bash
-composer require eventsauce/laravel-eventsauce
+composer require supplycart/laravel-eventsauce:^2.0
 ```
+
+## Upgrading from 1.x
+
+Version 2 is a major dependency upgrade. Before updating, make sure the
+application runs on PHP 8.5 and review the EventSauce 3 upgrade guide for any
+direct EventSauce API usage in the application.
+
+```bash
+composer require supplycart/laravel-eventsauce:^2.0 -W
+```
+
+The existing event-store schema and configuration remain compatible. Version 2
+adds an optional snapshot table and snapshot configuration described below.
+Custom implementations of EventSauce's `MessageRepository` must implement the
+new `paginate(PaginationCursor $cursor)` method.
 
 ## Configuration
 
@@ -259,6 +273,51 @@ final class SendConfirmationNotification extends Consumer implements ShouldQueue
 ```
 
 By doing so, we'll instruct Laravel to queue the consumer and let the data handling be done at a later point in time. This is useful to delay long-running data processing.
+
+## Snapshotting
+
+Version 2 includes a database-backed implementation of EventSauce snapshotting.
+First, make the aggregate implement EventSauce's
+`AggregateRootWithSnapshotting` contract and use its `SnapshottingBehaviour`
+trait. Then extend the snapshot-aware Laravel repository:
+
+```php
+use EventSauce\LaravelEventSauce\Snapshotting\SnapshottingAggregateRootRepository;
+
+final class RegistrationRepository extends SnapshottingAggregateRootRepository
+{
+    protected string $aggregateRoot = Registration::class;
+}
+```
+
+Persist pending events before taking the snapshot so that the snapshot cannot
+move ahead of the event stream:
+
+```php
+$registration = $repository->retrieve($registrationId);
+$registration->register($command);
+
+$repository->persist($registration);
+$repository->storeSnapshot($registration);
+
+$registration = $repository->retrieveFromSnapshot($registrationId);
+```
+
+The package migration creates the `domain_snapshots` table. These environment
+variables can override its storage location:
+
+```dotenv
+EVENTSAUCE_SNAPSHOT_CONNECTION=pgsql
+EVENTSAUCE_SNAPSHOT_TABLE=domain_snapshots
+```
+
+Snapshot states are serialized with `NativeSnapshotStateSerializer` by
+default. Applications that need JSON, encryption, explicit schema versions,
+or stricter object handling can implement `SnapshotStateSerializer` and set
+its class in `eventsauce.snapshot_state_serializer`.
+
+The message repository now supports `retrieveAllAfterVersion()`, so only events
+newer than the stored snapshot are replayed.
 
 ## Changelog
 

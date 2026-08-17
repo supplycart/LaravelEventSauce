@@ -22,8 +22,7 @@ class GenerateCommandTest extends TestCase
         }
     }
 
-    /** @test */
-    public function it_can_generate_eventsauce_code()
+    public function test_it_can_generate_eventsauce_code()
     {
         config(['eventsauce.repositories' => [
             RegistrationAggregateRootRepository::class,
@@ -34,8 +33,7 @@ class GenerateCommandTest extends TestCase
         $this->assertFileExists(__DIR__.'/../Fixtures/commands_and_events.php');
     }
 
-    /** @test */
-    public function it_throws_an_exception_when_the_definition_file_cannot_be_found()
+    public function test_it_throws_an_exception_when_the_definition_file_cannot_be_found()
     {
         config(['eventsauce.repositories' => [
             UndefinedDefinitionFileRepository::class,

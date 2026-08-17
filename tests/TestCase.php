@@ -19,7 +19,7 @@ abstract class TestCase extends Orchestra
         return [EventSauceServiceProvider::class];
     }
 
-    protected function getUserWasRegisteredMessage(RegistrationAggregateRootId $id = null): Message
+    protected function getUserWasRegisteredMessage(?RegistrationAggregateRootId $id = null): Message
     {
         $event = new UserWasRegistered('Dries Vints', 'dries.vints@gmail.com');
         $id ??= RegistrationAggregateRootId::create();

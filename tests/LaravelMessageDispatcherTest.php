@@ -12,8 +12,7 @@ use Tests\Fixtures\SendConfirmationNotification;
 
 class LaravelMessageDispatcherTest extends TestCase
 {
-    /** @test */
-    public function it_can_dispatch_messages()
+    public function test_it_can_dispatch_messages()
     {
         $message = $this->getUserWasRegisteredMessage();
 
@@ -24,8 +23,7 @@ class LaravelMessageDispatcherTest extends TestCase
         Bus::assertDispatched(HandleConsumer::class);
     }
 
-    /** @test */
-    public function it_can_dispatch_messages_on_specific_queue()
+    public function test_it_can_dispatch_messages_on_specific_queue()
     {
         $message = $this->getUserWasRegisteredMessage();
 

@@ -8,8 +8,9 @@ use EventSauce\EventSourcing\AggregateRootId;
 use EventSauce\EventSourcing\Header;
 use EventSauce\EventSourcing\Message;
 use EventSauce\EventSourcing\MessageRepository;
+use EventSauce\EventSourcing\OffsetCursor;
+use EventSauce\EventSourcing\PaginationCursor;
 use EventSauce\EventSourcing\Serialization\MessageSerializer;
-use Exception;
 use Generator;
 use Illuminate\Contracts\Config\Repository as Config;
 use Illuminate\Database\ConnectionInterface;
@@ -52,6 +53,62 @@ final class LaravelMessageRepository implements MessageRepository
             ->orderBy('recorded_at')
             ->get('payload');
 
+        $lastVersion = 0;
+        $messageCount = 0;
+
+        foreach ($payloads as $payload) {
+            $messages = $this->serializer->unserializePayload(json_decode($payload->payload, true));
+            $messages = $messages instanceof Message ? [$messages] : $messages;
+
+            foreach ($messages as $message) {
+                yield $message;
+                $messageCount++;
+                $lastVersion = max($lastVersion, (int) $message->header(Header::AGGREGATE_ROOT_VERSION));
+            }
+        }
+
+        return $lastVersion ?: $messageCount;
+    }
+
+    public function retrieveAllAfterVersion(AggregateRootId $id, int $aggregateRootVersion): Generator
+    {
+        $payloads = $this->connection()->table($this->table)
+            ->where('event_stream', $id->toString())
+            ->orderBy('recorded_at')
+            ->orderBy('id')
+            ->get('payload');
+
+        $lastVersion = 0;
+
+        foreach ($payloads as $payload) {
+            $messages = $this->serializer->unserializePayload(json_decode($payload->payload, true));
+            $messages = $messages instanceof Message ? [$messages] : $messages;
+
+            foreach ($messages as $message) {
+                $version = (int) $message->header(Header::AGGREGATE_ROOT_VERSION);
+
+                if ($version > $aggregateRootVersion) {
+                    yield $message;
+                    $lastVersion = $version;
+                }
+            }
+        }
+
+        return $lastVersion;
+    }
+
+    public function paginate(PaginationCursor $cursor): Generator
+    {
+        if (!$cursor instanceof OffsetCursor) {
+            throw new \InvalidArgumentException('Cursor must be an instance of OffsetCursor.');
+        }
+
+        $payloads = $this->connection()->table($this->table)
+            ->orderBy('id')
+            ->offset($cursor->offset())
+            ->limit($cursor->limit())
+            ->get('payload');
+
         foreach ($payloads as $payload) {
             $messages = $this->serializer->unserializePayload(json_decode($payload->payload, true));
 
@@ -62,15 +119,7 @@ final class LaravelMessageRepository implements MessageRepository
             }
         }
 
-        return $payloads->count();
-    }
-
-    /**
-     * @throws \Exception
-     */
-    public function retrieveAllAfterVersion(AggregateRootId $id, int $aggregateRootVersion): Generator
-    {
-        throw new Exception('Snapshotting not supported yet.');
+        return $cursor->plusOffset($payloads->count());
     }
 
     private function connection(): ConnectionInterface

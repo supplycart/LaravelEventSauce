@@ -15,6 +15,6 @@ final class CodeGenerationFailed extends Exception
 
     public static function codeGenerationNotInstalled(): self
     {
-        return new static('Code generation is not installed. Please run composer require --dev eventsauce/code-generation:^1.0');
+        return new static('Code generation is not installed. Please run composer require --dev eventsauce/code-generation:^3.6');
     }
 }

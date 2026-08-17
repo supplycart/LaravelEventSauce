@@ -11,6 +11,7 @@ use EventSauce\EventSourcing\Serialization\MessageSerializer;
 use EventSauce\LaravelEventSauce\Console\GenerateCommand;
 use EventSauce\LaravelEventSauce\Console\MakeAggregateRootCommand;
 use EventSauce\LaravelEventSauce\Console\MakeConsumerCommand;
+use EventSauce\LaravelEventSauce\Snapshotting\SnapshotStateSerializer;
 use Illuminate\Support\ServiceProvider;
 
 final class EventSauceServiceProvider extends ServiceProvider
@@ -43,6 +44,10 @@ final class EventSauceServiceProvider extends ServiceProvider
         $this->app->bind(MessageSerializer::class, fn($app) => $app->make(ConstructingMessageSerializer::class));
 
         $this->app->bind(MessageDecorator::class, fn($app) => $app->make(DefaultHeadersDecorator::class));
+
+        $this->app->bind(SnapshotStateSerializer::class, function ($app) {
+            return $app->make($app['config']->get('eventsauce.snapshot_state_serializer'));
+        });
     }
 
     public function provides()
