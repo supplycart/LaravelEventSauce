@@ -9,8 +9,7 @@ use Tests\TestCase;
 
 class MakeConsumerCommandTest extends TestCase
 {
-    /** @test */
-    public function it_can_generate_a_consumer()
+    public function test_it_can_generate_a_consumer()
     {
         $domainDirectory = $this->app->basePath('app/Domain');
 

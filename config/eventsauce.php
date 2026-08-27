@@ -16,6 +16,17 @@ return [
     'table' => env('EVENTSAUCE_TABLE', 'domain_messages'),
 
     /*
+     * Snapshots may use a separate database connection and table. When the
+     * connection is null, the regular EventSauce connection is used.
+     */
+
+    'snapshot_connection' => env('EVENTSAUCE_SNAPSHOT_CONNECTION'),
+
+    'snapshot_table' => env('EVENTSAUCE_SNAPSHOT_TABLE', 'domain_snapshots'),
+
+    'snapshot_state_serializer' => EventSauce\LaravelEventSauce\Snapshotting\NativeSnapshotStateSerializer::class,
+
+    /*
      * Here you specify all of your aggregate root repositories.
      * We'll use this info to generate commands and events.
      *

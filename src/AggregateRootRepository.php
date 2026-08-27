@@ -35,7 +35,7 @@ abstract class AggregateRootRepository implements EventSauceAggregateRootReposit
 
     protected static string $outputFile = '';
 
-    public function __construct(private LaravelMessageRepository $messageRepository)
+    public function __construct(protected LaravelMessageRepository $messageRepository)
     {
         if (! is_a($this->aggregateRoot, AggregateRoot::class, true)) {
             throw new LogicException('You have to set an aggregate root before the repository can be initialized.');
@@ -65,7 +65,7 @@ abstract class AggregateRootRepository implements EventSauceAggregateRootReposit
         $this->repository()->persistEvents($aggregateRootId, $aggregateRootVersion, ...$events);
     }
 
-    private function repository(): EventSauceAggregateRootRepository
+    protected function repository(): EventSauceAggregateRootRepository
     {
         return new ConstructingAggregateRootRepository(
             $this->aggregateRoot,

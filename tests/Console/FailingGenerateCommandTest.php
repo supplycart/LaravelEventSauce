@@ -19,10 +19,7 @@ class FailingGenerateCommandTest extends TestCase
         }
     }
 
-    /**
-     * @test
-     */
-    public function not_being_able_to_generate_code(): void
+    public function test_not_being_able_to_generate_code(): void
     {
         config(['eventsauce.repositories' => [
             UndefinedDefinitionFileRepository::class,

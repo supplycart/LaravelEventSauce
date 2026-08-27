@@ -43,24 +43,21 @@ class AggregateRootRepositoryTest extends TestCase
         });
     }
 
-    /** @test */
-    public function it_throws_an_exception_without_an_aggregate_root_property()
+    public function test_it_throws_an_exception_without_an_aggregate_root_property()
     {
         $this->expectException(LogicException::class);
 
         $this->repository(RepositoryWithoutAggregateRootProperty::class);
     }
 
-    /** @test */
-    public function it_throws_an_exception_with_a_non_aggregate_root()
+    public function test_it_throws_an_exception_with_a_non_aggregate_root()
     {
         $this->expectException(LogicException::class);
 
         $this->repository(RepositoryWithNonAggregateRoot::class);
     }
 
-    /** @test */
-    public function it_can_retrieve_an_aggregate()
+    public function test_it_can_retrieve_an_aggregate()
     {
         $repository = $this->repository(RegistrationAggregateRootRepository::class);
 
@@ -69,8 +66,7 @@ class AggregateRootRepositoryTest extends TestCase
         $this->assertInstanceOf(RegistrationAggregateRoot::class, $registration);
     }
 
-    /** @test */
-    public function it_can_persist_an_aggregate()
+    public function test_it_can_persist_an_aggregate()
     {
         $this->persistAggregate(RegistrationAggregateRootRepository::class);
 
@@ -80,16 +76,14 @@ class AggregateRootRepositoryTest extends TestCase
         ]);
     }
 
-    /** @test */
-    public function it_can_dispatch_its_consumers()
+    public function test_it_can_dispatch_its_consumers()
     {
         $this->persistAggregate(RegistrationAggregateRootRepository::class);
 
         $this->assertDatabaseHas('users', ['name' => 'Dries Vints', 'email' => 'dries.vints@gmail.com']);
     }
 
-    /** @test */
-    public function it_can_dispatch_its_consumers_on_a_configured_queue()
+    public function test_it_can_dispatch_its_consumers_on_a_configured_queue()
     {
         Bus::fake();
 
@@ -103,11 +97,9 @@ class AggregateRootRepositoryTest extends TestCase
     }
 
     /**
-     * @test
-     *
      * @todo Test this against non-in memory database connection.
      */
-    public function it_can_have_a_custom_connection()
+    public function test_it_can_have_a_custom_connection()
     {
         $connection = 'custom';
 
@@ -126,8 +118,7 @@ class AggregateRootRepositoryTest extends TestCase
         ], $connection);
     }
 
-    /** @test */
-    public function it_can_have_a_custom_table()
+    public function test_it_can_have_a_custom_table()
     {
         $this->persistAggregate(RepositoryWithCustomTable::class);
 
@@ -137,8 +128,7 @@ class AggregateRootRepositoryTest extends TestCase
         ]);
     }
 
-    /** @test */
-    public function it_can_have_have_message_decorators()
+    public function test_it_can_have_have_message_decorators()
     {
         $this->expectExceptionObject(new LogicException('A message decorator was triggered'));
 

@@ -2,7 +2,24 @@
 
 This changelog follows [the Keep a Changelog standard](https://keepachangelog.com).
 
-## [Unreleased](https://github.com/EventSaucePHP/LaravelEventSauce/compare/0.6.0...main)
+## Unreleased
+
+### Added
+
+- Implement EventSauce 3 message repository pagination with offset cursors.
+- Add database-backed snapshot persistence with configurable connection, table, and state serializer.
+- Add a snapshot-aware Laravel aggregate repository and event replay after a snapshot version.
+- Test the package against PHP 8.5, Laravel 13, and PHPUnit 12.
+
+### Changed
+
+- Require PHP 8.5, EventSauce 3, and Laravel 11, 12, or 13.
+- Upgrade the optional code generator integration to EventSauce Code Generation 3.6.
+- Upgrade Ramsey UUID to version 4.
+
+### Removed
+
+- Remove support for PHP versions before 8.5 and Laravel versions before 11.
 
 ## [0.6.0 (2022-03-15)](https://github.com/EventSaucePHP/LaravelEventSauce/compare/0.5.0...0.6.0)
 
